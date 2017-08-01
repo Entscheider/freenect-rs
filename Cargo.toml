@@ -10,3 +10,4 @@ libc = "0.2"
 image = "0.12"
 [dev-dependencies.glwinhelp]
 path = "glwinhelp"
+version = "0.1.0"
