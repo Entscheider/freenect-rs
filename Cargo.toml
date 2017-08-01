@@ -3,14 +3,13 @@ name = "freenectrs"
 version = "0.1.0"
 authors = ["Entscheider"]
 description = "A rust wrapper for libfreenect"
-license = "MIT/Apache-2.0"
+license = "Apache-2.0"
 categories = ["api-bindings"]
+repository = "https://github.com/Entscheider/freenect-rs"
 
 [dependencies]
 libc = "0.2"
 
 [dev-dependencies]
 image = "0.12"
-[dev-dependencies.glwinhelp]
-path = "glwinhelp"
-version = "0.1.0"
+glwinhelp = {version = "0.1.0", git="https://github.com/Entscheider/glwinhelp"}
