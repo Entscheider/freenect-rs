@@ -1,0 +1,3 @@
+[submodule "glwinhelp"]
+	path = glwinhelp
+	url = https://github.com/Entscheider/glwinhelp

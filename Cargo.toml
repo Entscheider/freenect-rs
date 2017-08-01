@@ -1,7 +1,7 @@
 [package]
 name = "freenectrs"
 version = "0.1.0"
-authors = ["Entscheider <email>"]
+authors = ["Entscheider"]
 
 [dependencies]
 libc = "0.2"
@@ -9,4 +9,4 @@ libc = "0.2"
 [dev-dependencies]
 image = "0.12"
 [dev-dependencies.glwinhelp]
-git = "https://github.com/Entscheider/glwinhelp"
+path = "glwinhelp"

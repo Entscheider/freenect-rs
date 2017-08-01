@@ -1,11 +1,10 @@
 # Freenect-rs
-
 freenect-rs is a rust wrapper to interact with [libfreenect](https://github.com/OpenKinect/libfreenect).
 It can be used to fetch rgb and depth data from Kinect and to control its motor.
 
 ## Example
 
-The example directory contains a more complete example.
+The example directory contains a more complete example. Run it with `cargo run --release --example kinect_live`.
 
 ```rust
 use freenectrs::freenect;
