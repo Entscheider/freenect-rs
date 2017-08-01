@@ -2,6 +2,9 @@
 name = "freenectrs"
 version = "0.1.0"
 authors = ["Entscheider"]
+description = "A rust wrapper for libfreenect"
+license = "MIT/Apache-2.0"
+categories = ["api-bindings"]
 
 [dependencies]
 libc = "0.2"
