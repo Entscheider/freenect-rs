@@ -6,6 +6,7 @@ description = "A rust wrapper for libfreenect"
 license = "Apache-2.0"
 categories = ["api-bindings"]
 repository = "https://github.com/Entscheider/freenect-rs"
+documentation = "https://docs.rs/freenectrs"
 
 [dependencies]
 libc = "0.2"
