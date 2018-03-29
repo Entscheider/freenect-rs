@@ -1,6 +1,11 @@
 extern crate freenectrs;
-extern crate glwinhelp;
+#[macro_use]
+extern crate glium;
+extern crate obj;
+extern crate genmesh;
 extern crate image;
+
+mod glwinhelp;
 
 use glwinhelp::{imgwin, VirtualKeyCode};
 use std::time::Duration;

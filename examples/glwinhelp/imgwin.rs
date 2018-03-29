@@ -120,16 +120,6 @@ impl ImgWindow {
         // self.facade.swap_buffers().unwrap();
     }
 
-    /// Checks if there were any close events
-    pub fn check_for_close(&self) -> bool {
-        for event in self.facade.poll_events() {
-            match event {
-                glium::glutin::Event::Closed => return true,
-                _ => (),
-            }
-        }
-        false
-    }
 
     pub fn check_for_event<T: EventHandler>(&self, handler: &mut T) {
         for event in self.facade.poll_events() {
