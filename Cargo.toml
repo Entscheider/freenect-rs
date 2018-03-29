@@ -10,7 +10,11 @@ repository = "https://github.com/Entscheider/freenect-rs"
 [dependencies]
 libc = "0.2"
 
+[[example]]
+name="kinect_live"
+path="examples/kinect_live.rs"
 [dev-dependencies]
 image = "0.12"
 [dev-dependencies.glwinhelp]
 path = "./glwinhelp"
+version = "0.1.0"
