@@ -1,4 +1,4 @@
 
 pub mod imgwin;
 
-pub use glium::glutin::VirtualKeyCode;
+pub use glium::glutin::event::VirtualKeyCode;
