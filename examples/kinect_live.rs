@@ -2,10 +2,12 @@ mod glwinhelp;
 
 use glwinhelp::{imgwin, VirtualKeyCode};
 
-use freenectrs::freenect;
-use std::error::Error;
-use freenectrs::freenect::{FreenectError, FreenectVideoStream, FreenectDepthStream, FreenectContext};
 use crate::glwinhelp::imgwin::ImgWindow;
+use freenectrs::freenect;
+use freenectrs::freenect::{
+    FreenectContext, FreenectDepthStream, FreenectError, FreenectVideoStream,
+};
+use std::error::Error;
 
 #[inline]
 fn depth_to_img(data: &[u16]) -> image::RgbaImage {
@@ -14,8 +16,12 @@ fn depth_to_img(data: &[u16]) -> image::RgbaImage {
         // the depth value for the current pixel
         let depth_value = data[idx as usize];
 
-        // we start at value of 600 for depth
-        let depth_value = if depth_value > 600 { depth_value - 600 } else { 0 };
+        // we start at a value of 600 for depth
+        let depth_value = if depth_value > 600 {
+            depth_value - 600
+        } else {
+            0
+        };
         // scale the value down
         let depth_value = depth_value / 2;
         // and use this value as a gray value by clipping everything above the maximal
@@ -26,8 +32,7 @@ fn depth_to_img(data: &[u16]) -> image::RgbaImage {
     })
 }
 
-pub fn main() -> Result<(), Box<dyn Error>>{
-
+pub fn main() -> Result<(), Box<dyn Error>> {
     // we init the device with support for depth, video and motor
     let ctx = Box::new(freenect::FreenectContext::init_with_video_motor()?);
     // We create a 'static lifetime by leaking. Doing so we can fulfill the requirement of glium's
@@ -49,10 +54,14 @@ pub fn main() -> Result<(), Box<dyn Error>>{
     // mainloop run (called in Application::run)
     let device = Box::leak(device);
     // init the depth and video mode
-    device.set_depth_mode(freenect::FreenectResolution::Medium,
-                         freenect::FreenectDepthFormat::MM)?;
-    device.set_video_mode(freenect::FreenectResolution::Medium,
-                         freenect::FreenectVideoFormat::Rgb)?;
+    device.set_depth_mode(
+        freenect::FreenectResolution::Medium,
+        freenect::FreenectDepthFormat::MM,
+    )?;
+    device.set_video_mode(
+        freenect::FreenectResolution::Medium,
+        freenect::FreenectVideoFormat::Rgb,
+    )?;
 
     // creating the gui elements
     let app = imgwin::Application::new();
@@ -80,7 +89,7 @@ pub fn main() -> Result<(), Box<dyn Error>>{
         vimg,
         dwin,
         vwin,
-        ctx
+        ctx,
     };
     // run the gui main loop
     app.run(input_handler, 25);
@@ -105,11 +114,10 @@ struct InputHandler<'a, 'b: 'a> {
     /// the window on which we draw the rgb image
     vwin: ImgWindow,
     /// the freenect context so we can stop its main loop
-    ctx: &'a FreenectContext
+    ctx: &'a FreenectContext,
 }
 
 impl<'a, 'b> imgwin::MainloopHandler for InputHandler<'a, 'b> {
-
     fn close_event(&mut self) {
         self.is_closed = true;
     }
@@ -143,12 +151,12 @@ impl<'a, 'b> imgwin::MainloopHandler for InputHandler<'a, 'b> {
     }
 
     fn next_frame(&mut self) {
-        // get and render the depth bytes to a image
+        // get and render the depth bytes to an image
         if let Ok((data, _ /* timestamp */)) = self.dstream.receiver.try_recv() {
             self.dimg = depth_to_img(&*data);
         }
 
-        // get and create an image from the rgb byzes
+        // get and create an image from the rgb bytes
         if let Ok((data, _ /* timestamp */)) = self.vstream.receiver.try_recv() {
             self.vimg = image::RgbaImage::from_fn(640, 480, |x, y| {
                 let idx = 3 * (y * 640 + x) as usize;
@@ -157,7 +165,7 @@ impl<'a, 'b> imgwin::MainloopHandler for InputHandler<'a, 'b> {
             });
         }
 
-        // and draw it to window
+        // and draw it to the windows
         let dimg = self.dimg.clone();
         self.dwin.set_img(dimg);
         let vimg = self.vimg.clone();

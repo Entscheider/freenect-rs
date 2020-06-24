@@ -95,11 +95,9 @@ pub type __darwin_useconds_t = __uint32_t;
 pub type __darwin_uuid_t = [::std::os::raw::c_uchar; 16usize];
 pub type __darwin_uuid_string_t = [::std::os::raw::c_char; 37usize];
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct __darwin_pthread_handler_rec {
-    pub __routine: ::std::option::Option<unsafe extern "C" fn(arg1:
-                                                                  *mut ::std::os::raw::c_void)>,
+    pub __routine: ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void)>,
     pub __arg: *mut ::std::os::raw::c_void,
     pub __next: *mut __darwin_pthread_handler_rec,
 }
@@ -141,8 +139,7 @@ impl ::std::default::Default for _opaque_pthread_cond_t {
     }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct _opaque_pthread_condattr_t {
     pub __sig: ::std::os::raw::c_long,
     pub __opaque: [::std::os::raw::c_char; 8usize],
@@ -169,8 +166,7 @@ impl ::std::default::Default for _opaque_pthread_mutex_t {
     }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct _opaque_pthread_mutexattr_t {
     pub __sig: ::std::os::raw::c_long,
     pub __opaque: [::std::os::raw::c_char; 8usize],
@@ -181,8 +177,7 @@ impl ::std::default::Default for _opaque_pthread_mutexattr_t {
     }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct _opaque_pthread_once_t {
     pub __sig: ::std::os::raw::c_long,
     pub __opaque: [::std::os::raw::c_char; 8usize],
@@ -209,8 +204,7 @@ impl ::std::default::Default for _opaque_pthread_rwlock_t {
     }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct _opaque_pthread_rwlockattr_t {
     pub __sig: ::std::os::raw::c_long,
     pub __opaque: [::std::os::raw::c_char; 16usize],
@@ -252,8 +246,7 @@ pub type uintptr_t = usize;
 pub type intmax_t = ::std::os::raw::c_long;
 pub type uintmax_t = ::std::os::raw::c_ulong;
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct fd_set {
     pub fds_bits: [__int32_t; 32usize],
 }
@@ -263,8 +256,7 @@ impl ::std::default::Default for fd_set {
     }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct timespec {
     pub tv_sec: __darwin_time_t,
     pub tv_nsec: ::std::os::raw::c_long,
@@ -275,8 +267,7 @@ impl ::std::default::Default for timespec {
     }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct timeval {
     pub tv_sec: __darwin_time_t,
     pub tv_usec: __darwin_suseconds_t,
@@ -288,8 +279,7 @@ impl ::std::default::Default for timeval {
     }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct timeval64 {
     pub tv_sec: __int64_t,
     pub tv_usec: __int64_t,
@@ -302,8 +292,7 @@ impl ::std::default::Default for timeval64 {
 pub type time_t = __darwin_time_t;
 pub type suseconds_t = __darwin_suseconds_t;
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct itimerval {
     pub it_interval: timeval,
     pub it_value: timeval,
@@ -314,8 +303,7 @@ impl ::std::default::Default for itimerval {
     }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct timezone {
     pub tz_minuteswest: ::std::os::raw::c_int,
     pub tz_dsttime: ::std::os::raw::c_int,
@@ -326,8 +314,7 @@ impl ::std::default::Default for timezone {
     }
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct clockinfo {
     pub hz: ::std::os::raw::c_int,
     pub tick: ::std::os::raw::c_int,
@@ -346,8 +333,7 @@ pub type __darwin_wctype_t = __uint32_t;
 pub type clock_t = __darwin_clock_t;
 pub type size_t = usize;
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct tm {
     pub tm_sec: ::std::os::raw::c_int,
     pub tm_min: ::std::os::raw::c_int,
@@ -388,8 +374,7 @@ pub enum freenect_device_flags {
     FREENECT_DEVICE_AUDIO = 4,
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct freenect_device_attributes {
     pub next: *mut freenect_device_attributes,
     pub camera_serial: *const ::std::os::raw::c_char,
@@ -452,8 +437,7 @@ pub enum freenect_flag_value {
     FREENECT_ON = 1,
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct freenect_frame_mode {
     pub reserved: uint32_t,
     pub resolution: freenect_resolution,
@@ -505,8 +489,7 @@ pub enum freenect_tilt_status_code {
     TILT_STATUS_MOVING = 4,
 }
 #[repr(C)]
-#[derive(Copy, Clone)]
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct freenect_raw_tilt_state {
     pub accelerometer_x: int16_t,
     pub accelerometer_y: int16_t,
@@ -519,9 +502,9 @@ impl ::std::default::Default for freenect_raw_tilt_state {
         unsafe { ::std::mem::zeroed() }
     }
 }
-pub enum _freenect_context { }
+pub enum _freenect_context {}
 pub type freenect_context = _freenect_context;
-pub enum _freenect_device { }
+pub enum _freenect_device {}
 pub type freenect_device = _freenect_device;
 pub type freenect_usb_context = ::std::os::raw::c_void;
 #[derive(Copy, Clone)]
@@ -537,24 +520,36 @@ pub enum freenect_loglevel {
     FREENECT_LOG_SPEW = 6,
     FREENECT_LOG_FLOOD = 7,
 }
-pub type freenect_log_cb =
-    ::std::option::Option<unsafe extern "C" fn(dev: *mut freenect_context,
-                                                 level: freenect_loglevel,
-                                                 msg: *const ::std::os::raw::c_char)>;
-pub type freenect_depth_cb =
-    ::std::option::Option<unsafe extern "C" fn(dev: *mut freenect_device,
-                                                 depth: *mut ::std::os::raw::c_void,
-                                                 timestamp: uint32_t)>;
-pub type freenect_video_cb =
-    ::std::option::Option<unsafe extern "C" fn(dev: *mut freenect_device,
-                                                 video: *mut ::std::os::raw::c_void,
-                                                 timestamp: uint32_t)>;
-pub type freenect_chunk_cb =
-    ::std::option::Option<unsafe extern "C" fn(buffer: *mut ::std::os::raw::c_void,
-                                                 pkt_data: *mut ::std::os::raw::c_void,
-                                                 pkt_num: ::std::os::raw::c_int,
-                                                 datalen: ::std::os::raw::c_int,
-                                                 user_data: *mut ::std::os::raw::c_void)>;
+pub type freenect_log_cb = ::std::option::Option<
+    unsafe extern "C" fn(
+        dev: *mut freenect_context,
+        level: freenect_loglevel,
+        msg: *const ::std::os::raw::c_char,
+    ),
+>;
+pub type freenect_depth_cb = ::std::option::Option<
+    unsafe extern "C" fn(
+        dev: *mut freenect_device,
+        depth: *mut ::std::os::raw::c_void,
+        timestamp: uint32_t,
+    ),
+>;
+pub type freenect_video_cb = ::std::option::Option<
+    unsafe extern "C" fn(
+        dev: *mut freenect_device,
+        video: *mut ::std::os::raw::c_void,
+        timestamp: uint32_t,
+    ),
+>;
+pub type freenect_chunk_cb = ::std::option::Option<
+    unsafe extern "C" fn(
+        buffer: *mut ::std::os::raw::c_void,
+        pkt_data: *mut ::std::os::raw::c_void,
+        pkt_num: ::std::os::raw::c_int,
+        datalen: ::std::os::raw::c_int,
+        user_data: *mut ::std::os::raw::c_void,
+    ),
+>;
 #[link(name = "freenect", kind = "dylib")]
 extern "C" {
     pub static mut tzname: [*mut ::std::os::raw::c_char; 0usize];
@@ -572,23 +567,27 @@ extern "C" {
     pub fn gmtime(arg1: *const time_t) -> *mut tm;
     pub fn localtime(arg1: *const time_t) -> *mut tm;
     pub fn mktime(arg1: *mut tm) -> time_t;
-    pub fn strftime(arg1: *mut ::std::os::raw::c_char,
-                    arg2: size_t,
-                    arg3: *const ::std::os::raw::c_char,
-                    arg4: *const tm)
-                    -> size_t;
-    pub fn strptime(arg1: *const ::std::os::raw::c_char,
-                    arg2: *const ::std::os::raw::c_char,
-                    arg3: *mut tm)
-                    -> *mut ::std::os::raw::c_char;
+    pub fn strftime(
+        arg1: *mut ::std::os::raw::c_char,
+        arg2: size_t,
+        arg3: *const ::std::os::raw::c_char,
+        arg4: *const tm,
+    ) -> size_t;
+    pub fn strptime(
+        arg1: *const ::std::os::raw::c_char,
+        arg2: *const ::std::os::raw::c_char,
+        arg3: *mut tm,
+    ) -> *mut ::std::os::raw::c_char;
     pub fn time(arg1: *mut time_t) -> time_t;
     pub fn tzset();
-    pub fn asctime_r(arg1: *const tm,
-                     arg2: *mut ::std::os::raw::c_char)
-                     -> *mut ::std::os::raw::c_char;
-    pub fn ctime_r(arg1: *const time_t,
-                   arg2: *mut ::std::os::raw::c_char)
-                   -> *mut ::std::os::raw::c_char;
+    pub fn asctime_r(
+        arg1: *const tm,
+        arg2: *mut ::std::os::raw::c_char,
+    ) -> *mut ::std::os::raw::c_char;
+    pub fn ctime_r(
+        arg1: *const time_t,
+        arg2: *mut ::std::os::raw::c_char,
+    ) -> *mut ::std::os::raw::c_char;
     pub fn gmtime_r(arg1: *const time_t, arg2: *mut tm) -> *mut tm;
     pub fn localtime_r(arg1: *const time_t, arg2: *mut tm) -> *mut tm;
     pub fn posix2time(arg1: time_t) -> time_t;
@@ -603,53 +602,63 @@ extern "C" {
     pub fn clock_settime(__clock_id: clockid_t, __tp: *const timespec) -> ::std::os::raw::c_int;
     pub fn adjtime(arg1: *const timeval, arg2: *mut timeval) -> ::std::os::raw::c_int;
     pub fn futimes(arg1: ::std::os::raw::c_int, arg2: *const timeval) -> ::std::os::raw::c_int;
-    pub fn lutimes(arg1: *const ::std::os::raw::c_char,
-                   arg2: *const timeval)
-                   -> ::std::os::raw::c_int;
+    pub fn lutimes(
+        arg1: *const ::std::os::raw::c_char,
+        arg2: *const timeval,
+    ) -> ::std::os::raw::c_int;
     pub fn settimeofday(arg1: *const timeval, arg2: *const timezone) -> ::std::os::raw::c_int;
     pub fn getitimer(arg1: ::std::os::raw::c_int, arg2: *mut itimerval) -> ::std::os::raw::c_int;
-    pub fn gettimeofday(arg1: *mut timeval,
-                        arg2: *mut ::std::os::raw::c_void)
-                        -> ::std::os::raw::c_int;
-    pub fn select(arg1: ::std::os::raw::c_int,
-                  arg2: *mut fd_set,
-                  arg3: *mut fd_set,
-                  arg4: *mut fd_set,
-                  arg5: *mut timeval)
-                  -> ::std::os::raw::c_int;
-    pub fn setitimer(arg1: ::std::os::raw::c_int,
-                     arg2: *const itimerval,
-                     arg3: *mut itimerval)
-                     -> ::std::os::raw::c_int;
-    pub fn utimes(arg1: *const ::std::os::raw::c_char,
-                  arg2: *const timeval)
-                  -> ::std::os::raw::c_int;
-    pub fn freenect_init(ctx: *mut *mut freenect_context,
-                         usb_ctx: *mut freenect_usb_context)
-                         -> ::std::os::raw::c_int;
+    pub fn gettimeofday(
+        arg1: *mut timeval,
+        arg2: *mut ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
+    pub fn select(
+        arg1: ::std::os::raw::c_int,
+        arg2: *mut fd_set,
+        arg3: *mut fd_set,
+        arg4: *mut fd_set,
+        arg5: *mut timeval,
+    ) -> ::std::os::raw::c_int;
+    pub fn setitimer(
+        arg1: ::std::os::raw::c_int,
+        arg2: *const itimerval,
+        arg3: *mut itimerval,
+    ) -> ::std::os::raw::c_int;
+    pub fn utimes(
+        arg1: *const ::std::os::raw::c_char,
+        arg2: *const timeval,
+    ) -> ::std::os::raw::c_int;
+    pub fn freenect_init(
+        ctx: *mut *mut freenect_context,
+        usb_ctx: *mut freenect_usb_context,
+    ) -> ::std::os::raw::c_int;
     pub fn freenect_shutdown(ctx: *mut freenect_context) -> ::std::os::raw::c_int;
     pub fn freenect_set_log_level(ctx: *mut freenect_context, level: freenect_loglevel);
     pub fn freenect_set_log_callback(ctx: *mut freenect_context, cb: freenect_log_cb);
     pub fn freenect_process_events(ctx: *mut freenect_context) -> ::std::os::raw::c_int;
-    pub fn freenect_process_events_timeout(ctx: *mut freenect_context,
-                                           timeout: *mut timeval)
-                                           -> ::std::os::raw::c_int;
+    pub fn freenect_process_events_timeout(
+        ctx: *mut freenect_context,
+        timeout: *mut timeval,
+    ) -> ::std::os::raw::c_int;
     pub fn freenect_num_devices(ctx: *mut freenect_context) -> ::std::os::raw::c_int;
-    pub fn freenect_list_device_attributes(ctx: *mut freenect_context,
-                                           attribute_list: *mut *mut freenect_device_attributes)
-                                           -> ::std::os::raw::c_int;
+    pub fn freenect_list_device_attributes(
+        ctx: *mut freenect_context,
+        attribute_list: *mut *mut freenect_device_attributes,
+    ) -> ::std::os::raw::c_int;
     pub fn freenect_free_device_attributes(attribute_list: *mut freenect_device_attributes);
     pub fn freenect_supported_subdevices() -> ::std::os::raw::c_int;
     pub fn freenect_select_subdevices(ctx: *mut freenect_context, subdevs: freenect_device_flags);
     pub fn freenect_enabled_subdevices(ctx: *mut freenect_context) -> freenect_device_flags;
-    pub fn freenect_open_device(ctx: *mut freenect_context,
-                                dev: *mut *mut freenect_device,
-                                index: ::std::os::raw::c_int)
-                                -> ::std::os::raw::c_int;
-    pub fn freenect_open_device_by_camera_serial(ctx: *mut freenect_context,
-                                                 dev: *mut *mut freenect_device,
-                                                 camera_serial: *const ::std::os::raw::c_char)
-                                                 -> ::std::os::raw::c_int;
+    pub fn freenect_open_device(
+        ctx: *mut freenect_context,
+        dev: *mut *mut freenect_device,
+        index: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+    pub fn freenect_open_device_by_camera_serial(
+        ctx: *mut freenect_context,
+        dev: *mut *mut freenect_device,
+        camera_serial: *const ::std::os::raw::c_char,
+    ) -> ::std::os::raw::c_int;
     pub fn freenect_close_device(dev: *mut freenect_device) -> ::std::os::raw::c_int;
     pub fn freenect_set_user(dev: *mut freenect_device, user: *mut ::std::os::raw::c_void);
     pub fn freenect_get_user(dev: *mut freenect_device) -> *mut ::std::os::raw::c_void;
@@ -657,12 +666,14 @@ extern "C" {
     pub fn freenect_set_video_callback(dev: *mut freenect_device, cb: freenect_video_cb);
     pub fn freenect_set_depth_chunk_callback(dev: *mut freenect_device, cb: freenect_chunk_cb);
     pub fn freenect_set_video_chunk_callback(dev: *mut freenect_device, cb: freenect_chunk_cb);
-    pub fn freenect_set_depth_buffer(dev: *mut freenect_device,
-                                     buf: *mut ::std::os::raw::c_void)
-                                     -> ::std::os::raw::c_int;
-    pub fn freenect_set_video_buffer(dev: *mut freenect_device,
-                                     buf: *mut ::std::os::raw::c_void)
-                                     -> ::std::os::raw::c_int;
+    pub fn freenect_set_depth_buffer(
+        dev: *mut freenect_device,
+        buf: *mut ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
+    pub fn freenect_set_video_buffer(
+        dev: *mut freenect_device,
+        buf: *mut ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
     pub fn freenect_start_depth(dev: *mut freenect_device) -> ::std::os::raw::c_int;
     pub fn freenect_start_video(dev: *mut freenect_device) -> ::std::os::raw::c_int;
     pub fn freenect_stop_depth(dev: *mut freenect_device) -> ::std::os::raw::c_int;
@@ -671,45 +682,59 @@ extern "C" {
     pub fn freenect_get_tilt_state(dev: *mut freenect_device) -> *mut freenect_raw_tilt_state;
     pub fn freenect_get_tilt_degs(state: *mut freenect_raw_tilt_state) -> f64;
     pub fn freenect_set_tilt_degs(dev: *mut freenect_device, angle: f64) -> ::std::os::raw::c_int;
-    pub fn freenect_get_tilt_status(state: *mut freenect_raw_tilt_state)
-                                    -> freenect_tilt_status_code;
-    pub fn freenect_set_led(dev: *mut freenect_device,
-                            option: freenect_led_options)
-                            -> ::std::os::raw::c_int;
-    pub fn freenect_get_mks_accel(state: *mut freenect_raw_tilt_state,
-                                  x: *mut f64,
-                                  y: *mut f64,
-                                  z: *mut f64);
+    pub fn freenect_get_tilt_status(
+        state: *mut freenect_raw_tilt_state,
+    ) -> freenect_tilt_status_code;
+    pub fn freenect_set_led(
+        dev: *mut freenect_device,
+        option: freenect_led_options,
+    ) -> ::std::os::raw::c_int;
+    pub fn freenect_get_mks_accel(
+        state: *mut freenect_raw_tilt_state,
+        x: *mut f64,
+        y: *mut f64,
+        z: *mut f64,
+    );
     pub fn freenect_get_video_mode_count() -> ::std::os::raw::c_int;
     pub fn freenect_get_video_mode(mode_num: ::std::os::raw::c_int) -> freenect_frame_mode;
     pub fn freenect_get_current_video_mode(dev: *mut freenect_device) -> freenect_frame_mode;
-    pub fn freenect_find_video_mode(res: freenect_resolution,
-                                    fmt: freenect_video_format)
-                                    -> freenect_frame_mode;
-    pub fn freenect_set_video_mode(dev: *mut freenect_device,
-                                   mode: freenect_frame_mode)
-                                   -> ::std::os::raw::c_int;
+    pub fn freenect_find_video_mode(
+        res: freenect_resolution,
+        fmt: freenect_video_format,
+    ) -> freenect_frame_mode;
+    pub fn freenect_set_video_mode(
+        dev: *mut freenect_device,
+        mode: freenect_frame_mode,
+    ) -> ::std::os::raw::c_int;
     pub fn freenect_get_depth_mode_count() -> ::std::os::raw::c_int;
     pub fn freenect_get_depth_mode(mode_num: ::std::os::raw::c_int) -> freenect_frame_mode;
     pub fn freenect_get_current_depth_mode(dev: *mut freenect_device) -> freenect_frame_mode;
-    pub fn freenect_find_depth_mode(res: freenect_resolution,
-                                    fmt: freenect_depth_format)
-                                    -> freenect_frame_mode;
-    pub fn freenect_set_depth_mode(dev: *mut freenect_device,
-                                   mode: freenect_frame_mode)
-                                   -> ::std::os::raw::c_int;
-    pub fn freenect_set_flag(dev: *mut freenect_device,
-                             flag: freenect_flag,
-                             value: freenect_flag_value)
-                             -> ::std::os::raw::c_int;
+    pub fn freenect_find_depth_mode(
+        res: freenect_resolution,
+        fmt: freenect_depth_format,
+    ) -> freenect_frame_mode;
+    pub fn freenect_set_depth_mode(
+        dev: *mut freenect_device,
+        mode: freenect_frame_mode,
+    ) -> ::std::os::raw::c_int;
+    pub fn freenect_set_flag(
+        dev: *mut freenect_device,
+        flag: freenect_flag,
+        value: freenect_flag_value,
+    ) -> ::std::os::raw::c_int;
     pub fn freenect_get_ir_brightness(dev: *mut freenect_device) -> ::std::os::raw::c_int;
-    pub fn freenect_set_ir_brightness(dev: *mut freenect_device,
-                                      brightness: uint16_t)
-                                      -> ::std::os::raw::c_int;
-    pub fn freenect_set_fw_address_nui(ctx: *mut freenect_context,
-                                       fw_ptr: *mut ::std::os::raw::c_uchar,
-                                       num_bytes: ::std::os::raw::c_uint);
-    pub fn freenect_set_fw_address_k4w(ctx: *mut freenect_context,
-                                       fw_ptr: *mut ::std::os::raw::c_uchar,
-                                       num_bytes: ::std::os::raw::c_uint);
+    pub fn freenect_set_ir_brightness(
+        dev: *mut freenect_device,
+        brightness: uint16_t,
+    ) -> ::std::os::raw::c_int;
+    pub fn freenect_set_fw_address_nui(
+        ctx: *mut freenect_context,
+        fw_ptr: *mut ::std::os::raw::c_uchar,
+        num_bytes: ::std::os::raw::c_uint,
+    );
+    pub fn freenect_set_fw_address_k4w(
+        ctx: *mut freenect_context,
+        fw_ptr: *mut ::std::os::raw::c_uchar,
+        num_bytes: ::std::os::raw::c_uint,
+    );
 }

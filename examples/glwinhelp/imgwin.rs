@@ -1,17 +1,17 @@
-use image;
 use glium;
-use glium::{Surface};
 use glium::index::PrimitiveType;
-use std::time::{Instant, Duration};
+use glium::Surface;
+use image;
+use std::time::{Duration, Instant};
 
-use glium::{implement_vertex, program, uniform};
-use glium::glutin::ContextBuilder;
-use glium::glutin::window::WindowBuilder;
-use glium::texture::{RawImage2d, CompressedSrgbTexture2d};
-use glium::glutin::event::{Event, WindowEvent, ElementState, StartCause, VirtualKeyCode};
+use glium::glutin::event::{ElementState, Event, StartCause, VirtualKeyCode, WindowEvent};
 use glium::glutin::event_loop::{ControlFlow, EventLoop};
+use glium::glutin::window::WindowBuilder;
+use glium::glutin::ContextBuilder;
+use glium::texture::{CompressedSrgbTexture2d, RawImage2d};
+use glium::{implement_vertex, program, uniform};
 
-#[derive(Copy,Clone)]
+#[derive(Copy, Clone)]
 struct Vertex {
     position: [f32; 2],
     tex_coords: [f32; 2],
@@ -20,14 +20,14 @@ struct Vertex {
 implement_vertex!(Vertex, position, tex_coords);
 
 /// An Application creates windows and runs a main loop
-pub struct Application{
+pub struct Application {
     main_loop: EventLoop<()>,
 }
 
 impl Application {
     pub fn new() -> Application {
         Application {
-            main_loop: EventLoop::new()
+            main_loop: EventLoop::new(),
         }
     }
 
@@ -39,31 +39,33 @@ impl Application {
     /// and `handler.next_frame` is called `fps` times per seconds.
     /// Whenever `handler.should_exit` turns true, the program exit.
     pub fn run<T: MainloopHandler + 'static>(self, mut handler: T, fps: u32) -> ! {
-        self.main_loop.run(move |event, _, control_flow|{
+        self.main_loop.run(move |event, _, control_flow| {
             let now = Instant::now();
             match event {
-                Event::WindowEvent { event: win_event, .. } => {
-                    match win_event {
-                        WindowEvent::CloseRequested => {
-                            handler.close_event();
-                        },
-                        WindowEvent::KeyboardInput { input, .. } if input.state == ElementState::Pressed => {
-                            handler.key_event(input.virtual_keycode)
-                        },
-                        _ => ()
+                Event::WindowEvent {
+                    event: win_event, ..
+                } => match win_event {
+                    WindowEvent::CloseRequested => {
+                        handler.close_event();
                     }
+                    WindowEvent::KeyboardInput { input, .. }
+                        if input.state == ElementState::Pressed =>
+                    {
+                        handler.key_event(input.virtual_keycode)
+                    }
+                    _ => (),
                 },
-                Event::NewEvents(StartCause::ResumeTimeReached {..}) | Event::NewEvents(StartCause::Init) => {
-                    handler.next_frame()
-                }
-                _ => ()
+                Event::NewEvents(StartCause::ResumeTimeReached { .. })
+                | Event::NewEvents(StartCause::Init) => handler.next_frame(),
+                _ => (),
             }
 
             if handler.should_exit() {
                 *control_flow = ControlFlow::Exit;
                 handler.on_exit();
             } else {
-                *control_flow = ControlFlow::WaitUntil(now + Duration::from_secs_f32(1f32 / fps as f32));
+                *control_flow =
+                    ControlFlow::WaitUntil(now + Duration::from_secs_f32(1f32 / fps as f32));
             }
         });
     }
@@ -96,30 +98,33 @@ pub trait MainloopHandler {
 
 impl ImgWindow {
     fn new<T: Into<String>>(title: T, main_loop: &EventLoop<()>) -> ImgWindow {
-        let wb =
-            WindowBuilder::new().with_title(title.into());
-        let cb= ContextBuilder::new().with_vsync(true);
+        let wb = WindowBuilder::new().with_title(title.into());
+        let cb = ContextBuilder::new().with_vsync(true);
         let display = glium::Display::new(wb, cb, &main_loop).unwrap();
 
         // vertex for a rect for drawing an image to the whole window
-        let vertex_buffer = glium::VertexBuffer::new(&display,
-                                                     &[Vertex {
-                                                           position: [-1.0, -1.0],
-                                                           tex_coords: [0.0, 0.0],
-                                                       },
-                                                       Vertex {
-                                                           position: [-1.0, 1.0],
-                                                           tex_coords: [0.0, 1.0],
-                                                       },
-                                                       Vertex {
-                                                           position: [1.0, 1.0],
-                                                           tex_coords: [1.0, 1.0],
-                                                       },
-                                                       Vertex {
-                                                           position: [1.0, -1.0],
-                                                           tex_coords: [1.0, 0.0],
-                                                       }])
-            .unwrap();
+        let vertex_buffer = glium::VertexBuffer::new(
+            &display,
+            &[
+                Vertex {
+                    position: [-1.0, -1.0],
+                    tex_coords: [0.0, 0.0],
+                },
+                Vertex {
+                    position: [-1.0, 1.0],
+                    tex_coords: [0.0, 1.0],
+                },
+                Vertex {
+                    position: [1.0, 1.0],
+                    tex_coords: [1.0, 1.0],
+                },
+                Vertex {
+                    position: [1.0, -1.0],
+                    tex_coords: [1.0, 0.0],
+                },
+            ],
+        )
+        .unwrap();
         let index_buffer =
             glium::IndexBuffer::new(&display, PrimitiveType::TriangleStrip, &[1 as u16, 2, 0, 3])
                 .unwrap();
@@ -149,7 +154,7 @@ impl ImgWindow {
             }
         "
         },)
-            .unwrap();
+        .unwrap();
 
         ImgWindow {
             texture: None,
@@ -182,11 +187,14 @@ impl ImgWindow {
                 ],
                 tex: texture
             };
-            target.draw(&self.vertex_buffer,
-                      &self.index_buffer,
-                      &self.program,
-                      &uniforms,
-                      &Default::default())
+            target
+                .draw(
+                    &self.vertex_buffer,
+                    &self.index_buffer,
+                    &self.program,
+                    &uniforms,
+                    &Default::default(),
+                )
                 .unwrap();
         }
         target.finish().unwrap();
