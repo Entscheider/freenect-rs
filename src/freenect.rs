@@ -1,16 +1,18 @@
 use super::freenect_ffi as ffi;
-use std::mem;
-use std::ptr;
-use std::result;
-use std::sync::Mutex;
-use std::sync::mpsc::{Sender, channel, SyncSender, sync_channel, Receiver, TryRecvError,
-                      TrySendError};
-use std::slice;
 use std;
+use std::cell::RefCell;
 use std::error::Error;
 use std::fmt;
+use std::mem;
+use std::mem::MaybeUninit;
+use std::ptr;
+use std::result;
+use std::slice;
+use std::sync::mpsc::{
+    channel, sync_channel, Receiver, Sender, SyncSender, TryRecvError, TrySendError,
+};
+use std::sync::Mutex;
 use std::thread;
-use std::cell::RefCell;
 
 #[derive(Debug)]
 pub struct FreenectError {
@@ -19,7 +21,9 @@ pub struct FreenectError {
 
 impl FreenectError {
     fn new<T: Into<String>>(text: T) -> FreenectError {
-        FreenectError { reason: text.into() }
+        FreenectError {
+            reason: text.into(),
+        }
     }
 }
 impl fmt::Display for FreenectError {
@@ -39,7 +43,7 @@ pub type Result<T> = result::Result<T, FreenectError>;
 /// FreenectContext should be used as the main point to interact with Kinect.
 pub struct FreenectContext {
     ctx: *mut ffi::freenect_context,
-    drop_sender: Mutex<Option<Sender<bool>>>,
+    drop_sender: Mutex<Option<Sender<()>>>,
     use_video: bool,
     thread_joiner: RefCell<Option<thread::JoinHandle<()>>>,
 }
@@ -51,7 +55,7 @@ impl FreenectContext {
     /// [setup_video_motor]: struct.FreenectContext.html#method.setup_video_motor
     pub fn init() -> Result<FreenectContext> {
         unsafe {
-            let mut ctx: *mut ffi::freenect_context = mem::uninitialized();
+            let mut ctx: *mut ffi::freenect_context = MaybeUninit::uninit().assume_init();
             let res = ffi::freenect_init(&mut ctx, ptr::null_mut());
             if res < 0 {
                 return Err(FreenectError::new("Unable to create freenect context"));
@@ -69,8 +73,10 @@ impl FreenectContext {
     /// Tells libfreenect to select the camera subdevice
     pub fn setup_video(mut self) -> FreenectContext {
         unsafe {
-            ffi::freenect_select_subdevices(self.ctx,
-                                            ffi::freenect_device_flags::FREENECT_DEVICE_CAMERA);
+            ffi::freenect_select_subdevices(
+                self.ctx,
+                ffi::freenect_device_flags::FREENECT_DEVICE_CAMERA,
+            );
             self.use_video = true;
             self
         }
@@ -103,7 +109,9 @@ impl FreenectContext {
         unsafe {
             let res = ffi::freenect_num_devices(self.ctx);
             if res < 0 {
-                return Err(FreenectError::new("Unable to retrieve number of freenect devices"));
+                return Err(FreenectError::new(
+                    "Unable to retrieve number of freenect devices",
+                ));
             }
             Ok(res as u32)
         }
@@ -111,11 +119,11 @@ impl FreenectContext {
 
     /// Opens a device using the given number.
     pub fn open_device(&self, nr: u32) -> Result<FreenectDevice> {
-        if nr >= try!(self.num_devices()) {
+        if nr >= self.num_devices()? {
             return Err(FreenectError::new(format!("Device nr {} not found", nr)));
         }
         unsafe {
-            let mut dev: *mut ffi::freenect_device = mem::uninitialized();
+            let mut dev: *mut ffi::freenect_device = MaybeUninit::uninit().assume_init();
             if ffi::freenect_open_device(self.ctx, &mut dev, nr as i32) < 0 {
                 return Err(FreenectError::new("Unable to open device"));
             }
@@ -127,9 +135,11 @@ impl FreenectContext {
     pub fn spawn_process_thread(&self) -> Result<()> {
         let mut drop_sender = self.drop_sender.lock().unwrap();
         if let Some(ref sender) = *drop_sender {
-            if let Err(_) = sender.send(false) {
-                return Err(FreenectError::new("Cannot spawn process thread, thread is already \
-                                               running"));
+            if let Err(_) = sender.send(()) {
+                return Err(FreenectError::new(
+                    "Cannot spawn process thread, thread is already \
+                                               running",
+                ));
             }
         }
         struct Helper {
@@ -142,8 +152,7 @@ impl FreenectContext {
         *self.thread_joiner.borrow_mut() = Some(thread::spawn(move || {
             'l: loop {
                 match r.try_recv() {
-                    Ok(true) => break 'l,
-                    Ok(false) => (),
+                    Ok(_) => (),
                     Err(TryRecvError::Empty) => (),
                     Err(TryRecvError::Disconnected) => break 'l,
                 }
@@ -170,9 +179,9 @@ impl FreenectContext {
 
     /// Stops the thread which process libfreenect's events
     pub fn stop_process_thread(&self) -> thread::Result<()> {
-        let drop_sender = self.drop_sender.lock().unwrap();
-        if let Some(ref sender) = *drop_sender {
-            let _ = sender.send(true);
+        let mut drop_sender = self.drop_sender.lock().unwrap();
+        if let Some(sender) = drop_sender.take() {
+            drop(sender);
         }
         if let Some(joiner) = self.thread_joiner.borrow_mut().take() {
             joiner.join()
@@ -274,12 +283,12 @@ pub struct FreenectDevice<'a, 'b> {
     video_sender: Mutex<Option<SyncSender<(&'b [u8], u32)>>>,
 }
 
-
 impl<'a, 'b> FreenectDevice<'a, 'b> {
-    fn new(ctx: &'a FreenectContext,
-           device: *mut ffi::freenect_device,
-           use_video: bool)
-           -> FreenectDevice {
+    fn new(
+        ctx: &'a FreenectContext,
+        device: *mut ffi::freenect_device,
+        use_video: bool,
+    ) -> FreenectDevice {
         let res = FreenectDevice {
             ctx: ctx,
             device: device,
@@ -305,35 +314,39 @@ impl<'a, 'b> FreenectDevice<'a, 'b> {
         if d_sender.is_some() {
             return Err(FreenectError::new("Depth Stream already created"));
         }
-        let (res, sender) = try!(FreenectDepthStream::new(self));
+        let (res, sender) = FreenectDepthStream::new(self)?;
         *d_sender = Some(sender);
         Ok(res)
     }
 
-    pub fn set_depth_mode(&self,
-                          resol: FreenectResolution,
-                          format: FreenectDepthFormat)
-                          -> Result<()> {
+    pub fn set_depth_mode(
+        &self,
+        resol: FreenectResolution,
+        format: FreenectDepthFormat,
+    ) -> Result<()> {
         unsafe {
-            if ffi::freenect_set_depth_mode(self.device,
-                                            ffi::freenect_find_depth_mode(resol.to_c(),
-                                                                          format.to_c())) <
-               0 {
+            if ffi::freenect_set_depth_mode(
+                self.device,
+                ffi::freenect_find_depth_mode(resol.to_c(), format.to_c()),
+            ) < 0
+            {
                 return Err(FreenectError::new("Unable to set depth mode"));
             }
         }
         Ok(())
     }
 
-    pub fn set_video_mode(&self,
-                          resol: FreenectResolution,
-                          format: FreenectVideoFormat)
-                          -> Result<()> {
+    pub fn set_video_mode(
+        &self,
+        resol: FreenectResolution,
+        format: FreenectVideoFormat,
+    ) -> Result<()> {
         unsafe {
-            if ffi::freenect_set_video_mode(self.device,
-                                            ffi::freenect_find_video_mode(resol.to_c(),
-                                                                          format.to_c())) <
-               0 {
+            if ffi::freenect_set_video_mode(
+                self.device,
+                ffi::freenect_find_video_mode(resol.to_c(), format.to_c()),
+            ) < 0
+            {
                 return Err(FreenectError::new("Unable to change video mode"));
             }
         }
@@ -346,14 +359,16 @@ impl<'a, 'b> FreenectDevice<'a, 'b> {
             ffi::freenect_set_user(self.device, mem::transmute(self));
         }
         if !self.use_video {
-            return Err(FreenectError::new("Cannot build video stream, context created without \
-                                           support for it"));
+            return Err(FreenectError::new(
+                "Cannot build video stream, context created without \
+                                           support for it",
+            ));
         }
         let mut v_sender = self.video_sender.lock().unwrap();
         if v_sender.is_some() {
             return Err(FreenectError::new("Video Stream already created"));
         }
-        let (res, sender) = try!(FreenectVideoStream::new(self));
+        let (res, sender) = FreenectVideoStream::new(self)?;
         *v_sender = Some(sender);
         Ok(res)
     }
@@ -401,32 +416,38 @@ impl<'a, 'b> Drop for FreenectDevice<'a, 'b> {
 /// }
 /// ```
 pub struct FreenectDepthStream<'a, 'b>
-    where 'b: 'a
+where
+    'b: 'a,
 {
     parent: &'a FreenectDevice<'a, 'b>,
     pub receiver: Receiver<(&'b [u16], u32)>,
 }
 
 impl<'a, 'b> FreenectDepthStream<'a, 'b> {
-    fn new(parent: &'a FreenectDevice<'a, 'b>)
-           -> Result<(FreenectDepthStream<'a, 'b>, SyncSender<(&'b [u16], u32)>)> {
+    fn new(
+        parent: &'a FreenectDevice<'a, 'b>,
+    ) -> Result<(FreenectDepthStream<'a, 'b>, SyncSender<(&'b [u16], u32)>)> {
         unsafe {
             if ffi::freenect_start_depth(parent.device) < 0 {
                 return Err(FreenectError::new("Unable to start depth"));
             }
         }
         let (s, r) = sync_channel(2);
-        Ok((FreenectDepthStream {
+        Ok((
+            FreenectDepthStream {
                 parent: parent,
                 receiver: r,
             },
-            s))
+            s,
+        ))
     }
 }
 
-extern "C" fn depth_callback(dev: *mut ffi::freenect_device,
-                             data: *mut std::os::raw::c_void,
-                             timestamp: u32) {
+extern "C" fn depth_callback(
+    dev: *mut ffi::freenect_device,
+    data: *mut std::os::raw::c_void,
+    timestamp: u32,
+) {
     unsafe {
         let data = data as *mut u16;
         let data = slice::from_raw_parts(data, 640 * 480);
@@ -441,9 +462,11 @@ extern "C" fn depth_callback(dev: *mut ffi::freenect_device,
     }
 }
 
-extern "C" fn video_callback(dev: *mut ffi::freenect_device,
-                             data: *mut std::os::raw::c_void,
-                             timestamp: u32) {
+extern "C" fn video_callback(
+    dev: *mut ffi::freenect_device,
+    data: *mut std::os::raw::c_void,
+    timestamp: u32,
+) {
     unsafe {
         let data = data as *mut u8;
         let data = slice::from_raw_parts(data, 640 * 480 * 3);
@@ -479,25 +502,29 @@ impl<'a, 'b> Drop for FreenectDepthStream<'a, 'b> {
 /// }
 /// ```
 pub struct FreenectVideoStream<'a, 'b>
-    where 'b: 'a
+where
+    'b: 'a,
 {
     parent: &'a FreenectDevice<'a, 'b>,
     pub receiver: Receiver<(&'b [u8], u32)>,
 }
 impl<'a, 'b> FreenectVideoStream<'a, 'b> {
-    fn new(parent: &'a FreenectDevice<'a, 'b>)
-           -> Result<(FreenectVideoStream<'a, 'b>, SyncSender<(&'b [u8], u32)>)> {
+    fn new(
+        parent: &'a FreenectDevice<'a, 'b>,
+    ) -> Result<(FreenectVideoStream<'a, 'b>, SyncSender<(&'b [u8], u32)>)> {
         unsafe {
             if ffi::freenect_start_video(parent.device) < 0 {
                 return Err(FreenectError::new("Unable to start video"));
             }
         }
         let (s, r) = sync_channel(2);
-        Ok((FreenectVideoStream {
+        Ok((
+            FreenectVideoStream {
                 parent: parent,
                 receiver: r,
             },
-            s))
+            s,
+        ))
     }
 }
 impl<'a, 'b> Drop for FreenectVideoStream<'a, 'b> {

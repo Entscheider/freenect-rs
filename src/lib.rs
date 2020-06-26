@@ -25,5 +25,5 @@
 //! }
 //! ctx.stop_process_thread().unwrap();
 //! ```
-mod freenect_ffi;
 pub mod freenect;
+mod freenect_ffi;
